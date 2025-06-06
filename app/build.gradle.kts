@@ -58,4 +58,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.8.2")
+
+    // Pager
+    implementation("androidx.paging:paging-runtime-ktx:3.3.6")
+    implementation("androidx.paging:paging-compose:3.3.6")
+
+    // SplashScreen
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }

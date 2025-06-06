@@ -1,4 +1,4 @@
-package com.sahilm.wtpdf_android
+package com.sahilm.wtpdf_android.features.onboarding.ui.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,20 +11,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.sahilm.wtpdf_android.features.onboarding.ui.screen.FirstOnboardingScreen
+import com.sahilm.wtpdf_android.features.onboarding.ui.screen.SecondOnboardingScreen
 import com.sahilm.wtpdf_android.ui.theme.WTpdFandroidTheme
 
-class MainActivity : ComponentActivity() {
+class OnboardingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             WTpdFandroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                SecondOnboardingScreen()
             }
         }
     }
@@ -42,6 +39,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     WTpdFandroidTheme {
-        Greeting("Android")
+        OnboardingActivity()
     }
 }
