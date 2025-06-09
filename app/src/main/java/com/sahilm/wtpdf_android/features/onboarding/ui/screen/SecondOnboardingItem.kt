@@ -40,7 +40,7 @@ fun SecondOnboardingItem(page: OnBoardingModel) {
                 contentDescription = null,
                 modifier = Modifier
                     .height(550.dp)
-                    .width(350.dp)
+                    .width(850.dp)
                     .padding(bottom = 20.dp),
                 contentScale = ContentScale.Crop
             )

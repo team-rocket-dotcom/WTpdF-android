@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,11 +31,10 @@ import com.sahilm.wtpdf_android.ui.theme.primaryLight
 import com.sahilm.wtpdf_android.ui.theme.secondaryLight
 import kotlinx.coroutines.delay
 
+@Preview(showBackground = true)
 @Composable
 fun FirstOnboardingScreen() {
     WTpdFandroidTheme {
-        val progressFlow = remember { progressFlow(delayTime = 10L) }
-        val progressState = progressFlow.collectAsState(initial = 0f)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -45,22 +47,14 @@ fun FirstOnboardingScreen() {
                     contentDescription = "App Icon",
                     modifier = Modifier.fillMaxWidth().fillMaxHeight(0.45f)
                 )
-                CircularProgressBar(
-                    progress = 0.85f,
-                    startAngle = 0f,
-                    size = 72.dp,
-                    animationOn = true,
-                    repeatOn = true
-                )
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(78.dp)
+                    .rotate(0.85f),
+                color = primaryLight,
+                strokeWidth = 6.dp
+            )
 
         }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun FirstOnboardingScreenPreview() {
-    WTpdFandroidTheme {
-        FirstOnboardingScreen()
     }
 }
