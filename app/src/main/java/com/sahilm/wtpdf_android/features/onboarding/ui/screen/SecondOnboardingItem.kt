@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,7 +30,7 @@ import com.sahilm.wtpdf_android.ui.theme.secondaryDark
 
 @Composable
 fun SecondOnboardingItem(page: OnBoardingModel) {
-    WTpdFandroidTheme {
+    WTpdFandroidTheme(dynamicColor = false) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,7 +50,7 @@ fun SecondOnboardingItem(page: OnBoardingModel) {
                 style = TextStyle(
                     fontFamily = bodyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = primaryDark,
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
                     fontSize = 36.sp
                 )
@@ -60,7 +61,7 @@ fun SecondOnboardingItem(page: OnBoardingModel) {
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W400,
-                    color = secondaryDark,
+                    color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.Center
                 )
             )

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">WTpdF-android</string>
     <string name="title_activity_onboarding">OnboardingActivity</string>
+    <string name="email_cannot_be_blank">Email cannot be blank</string>
+    <string name="email_not_valid">This email is not valid</string>
+    <string name="password_smaller_than_eight">Password cannot be less than 8 characters</string>
+    <string name="password_not_valid">The password must contain only letters and digits</string>
 </resources>
