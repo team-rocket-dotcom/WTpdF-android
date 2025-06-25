@@ -1,117 +1,135 @@
 package com.sahilm.wtpdf_android.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicSecureTextField
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.TextObfuscationMode
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.sahilm.wtpdf_android.R
-import com.sahilm.wtpdf_android.features.auth.utils.ErrorStatus
-import com.sahilm.wtpdf_android.features.auth.utils.FieldInput
+import com.sahilm.wtpdf_android.features.auth.util.UiText
 import com.sahilm.wtpdf_android.ui.theme.WTpdFandroidTheme
-import com.sahilm.wtpdf_android.ui.theme.displayFontFamily
 
 @Composable
 fun PasswordTextField(
     modifier: Modifier = Modifier,
-    value: String,
+    placeholder: String,
+    value: String = "",
     onValueChange: (String) -> Unit,
-    label: @Composable () -> Unit,
-    maxLines: Int = 1,
-    textColor: Color,
-    textFontWeight: FontWeight = FontWeight.SemiBold,
-    textFontFamily: FontFamily = displayFontFamily,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-    leadingIconResource: Int? = null,
-    trailingIconResource: Int? = R.drawable.icon_lock,
-    isVisible: Boolean = false,
-    isPasswordField: Boolean = false,
-    fieldInput: FieldInput,
-    errorStatus: ErrorStatus
-) {
+    imeAction: ImeAction = ImeAction.Next,
+    isError: Boolean = false,
+    leadingIcon: Int?,
+    trailingIconResource: @Composable (() -> Unit)? = null,
+    errorMessage: UiText?
+    ) {
     WTpdFandroidTheme {
         var showPassword by remember { mutableStateOf(false) }
-        TextField(
-            modifier = modifier
-                .fillMaxWidth(0.95f)
-                .padding(4.dp),
-            value = value,
-            onValueChange = onValueChange,
-            label = label,
-            maxLines = maxLines,
-            textStyle = TextStyle(
-                color = textColor,
-                fontWeight = textFontWeight,
-                fontFamily = textFontFamily,
-                fontSize = 20.sp
-            ),
-            keyboardOptions = keyboardOptions,
-            shape = RoundedCornerShape(8.dp),
-            colors = TextFieldDefaults.colors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-//            trailingIcon = if (isPasswordField) {
-//                IconButton(onClick = { showPassword = !showPassword }) {
-//                    Icon(
-//                        painter = if (showPassword) painterResource(R.drawable.icon_visibility)
-//                        else painterResource(R.drawable.icon_visibility_off),
-//                        contentDescription = null
-//                    )
-//                }
-//            } else if (fieldInput.hasInteracted && errorStatus.isError) {
-//                Icon(imageVector = Icons.Filled.Info, contentDescription = null)
-//            } else {
-//                null
-//            },
-            visualTransformation = if (isPasswordField && !showPassword) {
-                PasswordVisualTransformation()
-            } else {
-                VisualTransformation.None
-            },
+        val interactionSource = remember { MutableInteractionSource() }
+        val isFocused by interactionSource.collectIsFocusedAsState()
+        val colorBorder = if (isError) MaterialTheme.colorScheme.error else if (isFocused)
+            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+        val focusRequester = remember {
+            FocusRequester()
+        }
+
+        Column {
+            BasicTextField(
+                value = value,
+                onValueChange = {onValueChange(it)},
+                textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
+                maxLines = 1,
+                singleLine = true,
+                interactionSource = interactionSource,
+                visualTransformation =
+                    if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = imeAction,
+                ),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                decorationBox = { innerTextField ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = modifier
+                            .border(
+                                width = 1.dp,
+                                shape = RoundedCornerShape(8.dp),
+                                color = colorBorder
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .focusRequester(focusRequester)
+                            .padding(4.dp)
+                    ) {
+                        if (leadingIcon != null) {
+                            Spacer(modifier = Modifier.padding(4.dp))
+                            Icon(painter = painterResource(leadingIcon), contentDescription = null, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.padding(6.dp))
+                        } else {
+                            Spacer(modifier = Modifier.padding(8.dp))
+                        }
+                        Box(
+                            modifier = Modifier
+                                .weight(1.0f)
+                                .padding(vertical = 16.dp)
+                        ) {
+                            if (value.isEmpty()) {
+                                Text(
+                                    text = placeholder,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                )
+                            }
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                innerTextField()
+                            }
+                        }
+                        if (trailingIconResource != null) {
+                            trailingIconResource()
+                        } else {
+                            Spacer(modifier = Modifier.padding(8.dp))
+                        }
+                    }
+                }
+            )
+        }
+        Text(
+            text = if (isError) errorMessage!!.asString() else "",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
         )
     }
 

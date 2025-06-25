@@ -1,122 +1,150 @@
 package com.sahilm.wtpdf_android.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.sahilm.wtpdf_android.R
+import com.sahilm.wtpdf_android.features.auth.util.UiText
 import com.sahilm.wtpdf_android.ui.theme.WTpdFandroidTheme
 import com.sahilm.wtpdf_android.ui.theme.displayFontFamily
+import java.util.Locale
 
 @Composable
 fun InputTextField(
     modifier: Modifier = Modifier,
-    value: String,
+    placeholder: String,
+    value: String = "",
     onValueChange: (String) -> Unit,
-    label: String,
     maxLines: Int = 1,
-    textColor: Color,
-    textFontWeight: FontWeight = FontWeight.SemiBold,
-    textFontFamily: FontFamily = displayFontFamily,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+    singleLine: Boolean = false,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Next,
     leadingIconResource: Int? = null,
-    trailingIconResource: Int? = R.drawable.icon_cross,
-    isVisible: Boolean = false,
-) {
+    trailingIconResource: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    errorMessage: UiText? = null
+    ) {
     WTpdFandroidTheme {
-        TextField(
-            modifier = modifier
-                .fillMaxWidth(0.95f)
-                .padding(4.dp),
-            value = value,
-            onValueChange = onValueChange,
-            label = { Text(text = label, style = MaterialTheme.typography.bodyMedium) },
-            maxLines = maxLines,
-            textStyle = TextStyle(
-                color = textColor,
-                fontWeight = textFontWeight,
-                fontFamily = textFontFamily,
-                fontSize = 20.sp
-            ),
-            keyboardOptions = keyboardOptions,
-            leadingIcon = {
-                leadingIconResource?.let {
-                    Icon(
-                        modifier = modifier.size(24.dp),
-                        painter = painterResource(
-                            leadingIconResource
-                        ),
-                        contentDescription = null,
-                    )
-                }
-            },
-            shape = RoundedCornerShape(8.dp),
-            colors = TextFieldDefaults.colors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-            trailingIcon = {
-                AnimatedVisibility(
-                    visible = isVisible,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    trailingIconResource?.let {
-                        Icon(
-                            modifier = modifier.size(24.dp),
-                            painter = painterResource(trailingIconResource),
-                            contentDescription = null
-                        )
-                    }
-                }
-            }
-        )
-    }
 
+        val interactionSource = remember { MutableInteractionSource() }
+        val isFocused by interactionSource.collectIsFocusedAsState()
+        val colorBorder = if (isError) MaterialTheme.colorScheme.error else if (isFocused)
+            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+        val focusRequester = remember { FocusRequester() }
+        val context = LocalContext.current
+
+        Column {
+            BasicTextField(
+                value = value,
+                onValueChange = { onValueChange(it) },
+                textStyle = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                maxLines = maxLines,
+                singleLine = singleLine,
+                interactionSource = interactionSource,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = keyboardType,
+                    imeAction = imeAction
+                ),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                decorationBox = { innerTextField ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = modifier
+                            .border(
+                                width = 1.dp,
+                                shape = RoundedCornerShape(8.dp),
+                                color = colorBorder
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .focusRequester(focusRequester)
+                            .padding(4.dp)
+                    ) {
+                        if (leadingIconResource != null) {
+                            Spacer(modifier = Modifier.padding(4.dp))
+                            Icon(
+                                painter = painterResource(leadingIconResource),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                            )
+                            Spacer(modifier = Modifier.padding(6.dp))
+                        } else {
+                            Spacer(modifier = Modifier.padding(8.dp))
+                        }
+                        Box(
+                            modifier = Modifier
+                                .weight(1.0f)
+                                .padding(vertical = 16.dp)
+                        ) {
+                            if (value.isEmpty()) {
+                                Text(
+                                    text = placeholder,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                )
+                            }
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                innerTextField()
+                            }
+                        }
+                        if (trailingIconResource != null) {
+                            trailingIconResource()
+                        } else {
+                            Spacer(modifier = Modifier.padding(8.dp))
+                        }
+                    }
+                },
+            )
+            Text(
+                text = if (isError) errorMessage!!.asString(context) else "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = modifier
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PrimaryTextFieldPreview(modifier: Modifier = Modifier) {
     WTpdFandroidTheme {
-        var text by remember { mutableStateOf("") }
-        InputTextField(
-            value = text,
-            onValueChange = { text = it },
-            label = "Email",
-            textColor = MaterialTheme.colorScheme.onSurface,
-            leadingIconResource = R.drawable.ic_mail
-        )
+
     }
 }

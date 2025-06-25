@@ -14,13 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,29 +31,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sahilm.wtpdf_android.R
 import com.sahilm.wtpdf_android.components.InputTextField
 import com.sahilm.wtpdf_android.components.PasswordTextField
 import com.sahilm.wtpdf_android.components.PrimaryButton
-import com.sahilm.wtpdf_android.features.auth.utils.FieldInput
+import com.sahilm.wtpdf_android.features.auth.ui.viewmodel.ValidationEvent
+import com.sahilm.wtpdf_android.features.auth.ui.viewmodel.ValidationViewModel
 import com.sahilm.wtpdf_android.ui.theme.WTpdFandroidTheme
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Preview(showBackground = true)
 @Composable
 fun SignUpScreen() {
     WTpdFandroidTheme {
 
-        var userName by remember { mutableStateOf("") }
-        val userNameIsVisible by remember { derivedStateOf { userName.isNotBlank() } }
-        var email by remember { mutableStateOf("") }
-        val emailIsVisible by remember { derivedStateOf { email.isNotBlank() } }
-        var password by remember { mutableStateOf("") }
-        val passwordIsVisible by remember { derivedStateOf { password.isNotBlank() } }
-        var confirmPassword by remember { mutableStateOf("") }
-        val confirmPasswordIsVisible by remember { derivedStateOf { confirmPassword.isNotBlank() } }
+        val validationViewModel: ValidationViewModel = viewModel()
 
         Surface(
             color = MaterialTheme.colorScheme.background
@@ -109,36 +108,120 @@ fun SignUpScreen() {
                 }
                 Spacer(modifier = Modifier.padding(16.dp))
                 InputTextField(
-                    value = userName,
-                    onValueChange = { userName = it },
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    label = { Text("User Name") },
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    placeholder = stringResource(id = R.string.strUsername),
+                    value = validationViewModel.formState.userName,
+                    onValueChange = {
+                        validationViewModel.onEvent(ValidationEvent.UsernameChanged(it))
+                    },
                     leadingIconResource = R.drawable.icon_user,
-                    isVisible = userNameIsVisible
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next,
+                    singleLine = true,
+                    trailingIconResource = {
+                        if (validationViewModel.formState.userName.isNotBlank()) {
+                            IconButton(
+                                onClick = {
+                                    validationViewModel.onEvent(ValidationEvent.UsernameChanged(""))
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.icon_cross),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                    }
                 )
                 InputTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    label = "Email",
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    placeholder = stringResource(id = R.string.strEmail),
+                    value = validationViewModel.formState.email,
+                    onValueChange = {
+                        validationViewModel.onEvent(ValidationEvent.EmailChanged(it))
+                    },
                     leadingIconResource = R.drawable.ic_mail,
-                    isVisible = emailIsVisible,
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next,
+                    singleLine = true,
+                    isError = validationViewModel.formState.emailError != null,
+                    errorMessage = validationViewModel.formState.emailError,
+                    trailingIconResource = {
+                        if (validationViewModel.formState.email.isNotEmpty()) {
+                            IconButton(
+                                onClick = {
+                                    validationViewModel.onEvent(ValidationEvent.EmailChanged(""))
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.icon_cross),
+                                    contentDescription = "Clear email",
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                    }
                 )
                 PasswordTextField(
-                    value = password,
-                    onValueChange = {password = it},
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    label = { Text("Password") },
-                    leadingIconResource = R.drawable.icon_lock,
-                    isVisible = passwordIsVisible
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    placeholder = stringResource(id = R.string.strPassword),
+                    value = validationViewModel.formState.password,
+                    onValueChange = {
+                        validationViewModel.onEvent(ValidationEvent.PasswordChanged(it))
+                    },
+                    imeAction = ImeAction.Next,
+                    leadingIcon = R.drawable.icon_lock,
+                    trailingIconResource = {
+                        IconButton(
+                            onClick = {
+                                validationViewModel.onEvent(ValidationEvent.VisiblePassword(!(validationViewModel.formState.isVisiblePassword)))
+                            }
+                        ) {
+                            Icon(
+                                painter = if (validationViewModel.formState.isVisiblePassword) painterResource(
+                                    id = R.drawable.icon_visibility
+                                ) else painterResource(
+                                    id = R.drawable.icon_visibility_off
+                                ),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    },
+                    isError = validationViewModel.formState.passwordError != null,
+                    errorMessage = validationViewModel.formState.passwordError
                 )
                 PasswordTextField(
-                    value = confirmPassword,
-                    onValueChange = {confirmPassword = it},
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    label = { Text("Confirm Password") },
-                    leadingIconResource = R.drawable.icon_lock_closed,
-                    isVisible = confirmPasswordIsVisible
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    placeholder = stringResource(id = R.string.strConfirmPassword),
+                    value = validationViewModel.formState.confirmPassword,
+                    onValueChange = {
+                        validationViewModel.onEvent(ValidationEvent.ConfirmPasswordChanged(it))
+                    },
+                    imeAction = ImeAction.Done,
+                    leadingIcon = R.drawable.icon_lock_closed,
+                    trailingIconResource = {
+                        IconButton(
+                            onClick = {
+                                validationViewModel.onEvent(ValidationEvent.VisiblePassword((!validationViewModel.formState.isVisiblePassword)))
+                            }
+                        ) {
+                            Icon(
+                                painter = if (validationViewModel.formState.isVisiblePassword) painterResource(
+                                    id = R.drawable.icon_visibility
+                                ) else painterResource(
+                                    id = R.drawable.icon_visibility_off
+                                ),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    },
+                    isError = validationViewModel.formState.confirmPasswordError != null,
+                    errorMessage = validationViewModel.formState.confirmPasswordError
                 )
                 Spacer(modifier = Modifier.padding(18.dp))
                 PrimaryButton(
