@@ -1,4 +1,4 @@
-package com.sahilm.wtpdf_android.components
+package com.sahilm.wtpdf_android.core.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

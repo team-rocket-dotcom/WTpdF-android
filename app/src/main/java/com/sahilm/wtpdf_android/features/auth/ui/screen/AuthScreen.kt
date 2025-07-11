@@ -21,16 +21,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sahilm.wtpdf_android.R
-import com.sahilm.wtpdf_android.components.HorizontalOrDivider
-import com.sahilm.wtpdf_android.components.PrimaryButton
-import com.sahilm.wtpdf_android.components.SecondaryButton
-import com.sahilm.wtpdf_android.components.TertiaryButton
+import com.sahilm.wtpdf_android.core.components.HorizontalOrDivider
+import com.sahilm.wtpdf_android.core.components.PrimaryButton
+import com.sahilm.wtpdf_android.core.components.SecondaryButton
+import com.sahilm.wtpdf_android.core.components.TertiaryButton
 import com.sahilm.wtpdf_android.ui.theme.WTpdFandroidTheme
 import com.sahilm.wtpdf_android.ui.theme.displayFontFamily
 
-@Preview(showBackground = true)
 @Composable
-fun LoginScreen() {
+fun AuthScreen(
+    navigateSignUpScreen: () -> Unit
+) {
     WTpdFandroidTheme {
         Column(
             modifier = Modifier
@@ -79,9 +80,9 @@ fun LoginScreen() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Don't have account?")
+                Text(text = "Don't have an account?")
                 TertiaryButton(
-                    onClick = {},
+                    onClick = {navigateSignUpScreen()},
                     buttonContentText = "Sign Up",
                     buttonContentTextSize = 24.sp
                 )

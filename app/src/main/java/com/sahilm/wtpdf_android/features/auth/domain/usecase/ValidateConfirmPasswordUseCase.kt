@@ -5,8 +5,8 @@ import com.sahilm.wtpdf_android.features.auth.domain.model.ValidationResult
 import com.sahilm.wtpdf_android.features.auth.util.BaseUseCase
 import com.sahilm.wtpdf_android.features.auth.util.UiText
 
-class ValidateConfirmPasswordUseCase : BaseUseCase<Params, ValidationResult> {
-    override fun execute(input: Params): ValidationResult {
+class ValidateConfirmPasswordUseCase : BaseUseCase<PasswordParams, ValidationResult> {
+    override fun execute(input: PasswordParams): ValidationResult {
         if (input.confirmPassword.isEmpty()) {
             return ValidationResult(
                 successful = false,
@@ -29,4 +29,4 @@ class ValidateConfirmPasswordUseCase : BaseUseCase<Params, ValidationResult> {
 
 }
 
-data class Params(val password: String, val confirmPassword: String)
+data class PasswordParams(val password: String, val confirmPassword: String)

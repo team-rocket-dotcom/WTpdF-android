@@ -1,4 +1,4 @@
-package com.sahilm.wtpdf_android.components
+package com.sahilm.wtpdf_android.core.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,15 +28,15 @@ fun PrimaryButton(
     onClick : () -> Unit,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    disabledContainerColor: Color = MaterialTheme.colorScheme.surface,
-    disabledContentColor: Color = MaterialTheme.colorScheme.onSurface,
+    disabledContainerColor: Color = MaterialTheme.colorScheme.onSurface,
+    disabledContentColor: Color = MaterialTheme.colorScheme.onPrimary,
     enabled: Boolean = true,
     shape: Shape = RoundedCornerShape(8.dp),
     elevation: Dp = 8.dp,
     buttonContentText: String,
     buttonContentSize: TextUnit = 18.sp,
     buttonContentFontFamily: FontFamily = bodyFontFamily,
-    buttonContentPadding: Dp = 12.dp
+    buttonContentPadding: Dp = 12.dp,
     ) {
     WTpdFandroidTheme {
         Button(
@@ -51,7 +51,7 @@ fun PrimaryButton(
             enabled = enabled,
             shape = shape,
            elevation = ButtonDefaults.elevatedButtonElevation(elevation),
-            contentPadding = PaddingValues(buttonContentPadding)
+            contentPadding = PaddingValues(buttonContentPadding),
         ) {
             Text(
                 text = buttonContentText,

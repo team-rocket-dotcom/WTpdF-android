@@ -1,9 +1,11 @@
 package com.sahilm.wtpdf_android.features.auth.ui.screen
 
+import android.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,12 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,39 +30,40 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahilm.wtpdf_android.R
-import com.sahilm.wtpdf_android.components.InputTextField
-import com.sahilm.wtpdf_android.components.PasswordTextField
-import com.sahilm.wtpdf_android.components.PrimaryButton
-import com.sahilm.wtpdf_android.features.auth.ui.viewmodel.ValidationEvent
-import com.sahilm.wtpdf_android.features.auth.ui.viewmodel.ValidationViewModel
+import com.sahilm.wtpdf_android.core.components.InputTextField
+import com.sahilm.wtpdf_android.core.components.PasswordTextField
+import com.sahilm.wtpdf_android.core.components.PrimaryButton
+import com.sahilm.wtpdf_android.core.components.TertiaryButton
+import com.sahilm.wtpdf_android.features.auth.ui.viewmodel.SignUpUiEvent
+import com.sahilm.wtpdf_android.features.auth.ui.viewmodel.SignUpViewModel
+import com.sahilm.wtpdf_android.features.auth.ui.viewmodel.SignUpValidationEvent
 import com.sahilm.wtpdf_android.ui.theme.WTpdFandroidTheme
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 
-@Preview(showBackground = true)
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(
+    signUpViewModel: SignUpViewModel = hiltViewModel()
+) {
     WTpdFandroidTheme {
-
-        val validationViewModel: ValidationViewModel = viewModel()
-
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
 
             Column(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(4.dp, top = 26.dp)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AuthTopBar(
-                    onClick = {},
+                    onClick = {signUpViewModel.onSignUpEvent(SignUpUiEvent.NavigateToLogin)},
                     topText = "Sign Up"
                 )
                 Spacer(modifier = Modifier.padding(16.dp))
@@ -110,19 +107,19 @@ fun SignUpScreen() {
                 InputTextField(
                     modifier = Modifier.fillMaxWidth(0.95f),
                     placeholder = stringResource(id = R.string.strUsername),
-                    value = validationViewModel.formState.userName,
+                    value = signUpViewModel.formState.userName,
                     onValueChange = {
-                        validationViewModel.onEvent(ValidationEvent.UsernameChanged(it))
+                        signUpViewModel.onEvent(SignUpValidationEvent.UsernameChanged(it))
                     },
                     leadingIconResource = R.drawable.icon_user,
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                     singleLine = true,
                     trailingIconResource = {
-                        if (validationViewModel.formState.userName.isNotBlank()) {
+                        if (signUpViewModel.formState.userName.isNotBlank()) {
                             IconButton(
                                 onClick = {
-                                    validationViewModel.onEvent(ValidationEvent.UsernameChanged(""))
+                                    signUpViewModel.onEvent(SignUpValidationEvent.UsernameChanged(""))
                                 }
                             ) {
                                 Icon(
@@ -137,21 +134,21 @@ fun SignUpScreen() {
                 InputTextField(
                     modifier = Modifier.fillMaxWidth(0.95f),
                     placeholder = stringResource(id = R.string.strEmail),
-                    value = validationViewModel.formState.email,
+                    value = signUpViewModel.formState.email,
                     onValueChange = {
-                        validationViewModel.onEvent(ValidationEvent.EmailChanged(it))
+                        signUpViewModel.onEvent(SignUpValidationEvent.EmailChanged(it))
                     },
                     leadingIconResource = R.drawable.ic_mail,
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next,
                     singleLine = true,
-                    isError = validationViewModel.formState.emailError != null,
-                    errorMessage = validationViewModel.formState.emailError,
+                    isError = signUpViewModel.formState.emailError != null,
+                    errorMessage = signUpViewModel.formState.emailError,
                     trailingIconResource = {
-                        if (validationViewModel.formState.email.isNotEmpty()) {
+                        if (signUpViewModel.formState.email.isNotEmpty()) {
                             IconButton(
                                 onClick = {
-                                    validationViewModel.onEvent(ValidationEvent.EmailChanged(""))
+                                    signUpViewModel.onEvent(SignUpValidationEvent.EmailChanged(""))
                                 }
                             ) {
                                 Icon(
@@ -166,20 +163,20 @@ fun SignUpScreen() {
                 PasswordTextField(
                     modifier = Modifier.fillMaxWidth(0.95f),
                     placeholder = stringResource(id = R.string.strPassword),
-                    value = validationViewModel.formState.password,
+                    value = signUpViewModel.formState.password,
                     onValueChange = {
-                        validationViewModel.onEvent(ValidationEvent.PasswordChanged(it))
+                        signUpViewModel.onEvent(SignUpValidationEvent.PasswordChanged(it))
                     },
                     imeAction = ImeAction.Next,
                     leadingIcon = R.drawable.icon_lock,
                     trailingIconResource = {
                         IconButton(
                             onClick = {
-                                validationViewModel.onEvent(ValidationEvent.VisiblePassword(!(validationViewModel.formState.isVisiblePassword)))
+                                signUpViewModel.onEvent(SignUpValidationEvent.VisiblePassword(!(signUpViewModel.formState.isVisiblePassword)))
                             }
                         ) {
                             Icon(
-                                painter = if (validationViewModel.formState.isVisiblePassword) painterResource(
+                                painter = if (signUpViewModel.formState.isVisiblePassword) painterResource(
                                     id = R.drawable.icon_visibility
                                 ) else painterResource(
                                     id = R.drawable.icon_visibility_off
@@ -190,26 +187,28 @@ fun SignUpScreen() {
                             )
                         }
                     },
-                    isError = validationViewModel.formState.passwordError != null,
-                    errorMessage = validationViewModel.formState.passwordError
+                    isError = signUpViewModel.formState.passwordError != null,
+                    errorMessage = signUpViewModel.formState.passwordError,
+                    visualTransformation =
+                        if (signUpViewModel.formState.isVisiblePassword) VisualTransformation.None else PasswordVisualTransformation()
                 )
                 PasswordTextField(
                     modifier = Modifier.fillMaxWidth(0.95f),
                     placeholder = stringResource(id = R.string.strConfirmPassword),
-                    value = validationViewModel.formState.confirmPassword,
+                    value = signUpViewModel.formState.confirmPassword,
                     onValueChange = {
-                        validationViewModel.onEvent(ValidationEvent.ConfirmPasswordChanged(it))
+                        signUpViewModel.onEvent(SignUpValidationEvent.ConfirmPasswordChanged(it))
                     },
                     imeAction = ImeAction.Done,
                     leadingIcon = R.drawable.icon_lock_closed,
                     trailingIconResource = {
                         IconButton(
                             onClick = {
-                                validationViewModel.onEvent(ValidationEvent.VisiblePassword((!validationViewModel.formState.isVisiblePassword)))
+                                signUpViewModel.onEvent(SignUpValidationEvent.VisiblePassword((!signUpViewModel.formState.isVisiblePassword)))
                             }
                         ) {
                             Icon(
-                                painter = if (validationViewModel.formState.isVisiblePassword) painterResource(
+                                painter = if (signUpViewModel.formState.isVisiblePassword) painterResource(
                                     id = R.drawable.icon_visibility
                                 ) else painterResource(
                                     id = R.drawable.icon_visibility_off
@@ -220,16 +219,45 @@ fun SignUpScreen() {
                             )
                         }
                     },
-                    isError = validationViewModel.formState.confirmPasswordError != null,
-                    errorMessage = validationViewModel.formState.confirmPasswordError
+                    isError = signUpViewModel.formState.confirmPasswordError != null,
+                    errorMessage = signUpViewModel.formState.confirmPasswordError,
+                    visualTransformation =
+                        if (signUpViewModel.formState.isVisiblePassword) VisualTransformation.None else PasswordVisualTransformation()
                 )
                 Spacer(modifier = Modifier.padding(18.dp))
                 PrimaryButton(
                     modifier = Modifier.fillMaxWidth(0.95f),
                     onClick = {},
-                    buttonContentText = "Sign Up"
+                    buttonContentText = "Sign Up",
+                    enabled = if (
+                        signUpViewModel.formState.passwordError != null &&
+                        signUpViewModel.formState.emailError != null &&
+                        signUpViewModel.formState.confirmPasswordError != null
+                        ) {
+                        false
+                    } else {
+                        true
+                    }
                 )
+                Spacer(modifier = Modifier.padding(24.dp))
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Already have an account?")
+                    TertiaryButton(
+                        onClick = {signUpViewModel.onSignUpClicked()},
+                        buttonContentText = "Sign In",
+                        buttonContentTextSize = 24.sp
+                    )
+                }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignUpScreenPreview() {
+    WTpdFandroidTheme { SignUpScreen() }
 }

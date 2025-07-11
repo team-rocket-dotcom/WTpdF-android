@@ -5,7 +5,7 @@
     <string name="strEmail">Email</string>
     <string name="strPassword">Password</string>
     <string name="strConfirmPassword">Confirm Password</string>
-    <string name="strUsername">Username</string>
+    <string name="strUsername">Name</string>
     <string name="strLogin">Login</string>
     <string name="strSignUp">Sign Up</string>
 

@@ -1,6 +1,5 @@
-package com.sahilm.wtpdf_android.components
+package com.sahilm.wtpdf_android.core.components
 
-import android.R
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -17,19 +16,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.sahilm.wtpdf_android.ui.theme.backgroundDark
-import com.sahilm.wtpdf_android.ui.theme.onPrimaryLight
-import com.sahilm.wtpdf_android.ui.theme.primaryDark
 import com.sahilm.wtpdf_android.ui.theme.primaryLight
 import com.sahilm.wtpdf_android.ui.theme.secondaryDark
-import com.sahilm.wtpdf_android.ui.theme.secondaryLight
-import com.sahilm.wtpdf_android.ui.theme.tertiaryDark
-import com.sahilm.wtpdf_android.ui.theme.tertiaryLight
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
