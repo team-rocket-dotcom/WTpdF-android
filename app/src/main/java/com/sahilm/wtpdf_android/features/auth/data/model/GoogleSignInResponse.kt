@@ -1,10 +1,8 @@
 package com.sahilm.wtpdf_android.features.auth.data.model
 
-data class SignUpResponse(
+data class GoogleSignInResponse(
     val access: String,
     val refresh: String,
-    val user: SignUpUserDataEntity,
+    val user: GoogleSignInUserDataEntity,
     val message: String
 )
-
-

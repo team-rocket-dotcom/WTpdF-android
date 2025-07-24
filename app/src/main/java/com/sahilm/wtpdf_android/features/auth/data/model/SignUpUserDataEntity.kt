@@ -2,7 +2,7 @@ package com.sahilm.wtpdf_android.features.auth.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class UserDataEntity(
+data class SignUpUserDataEntity(
 val id: String,
 val email: String,
 @SerializedName("first_name")

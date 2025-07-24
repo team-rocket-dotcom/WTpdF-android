@@ -10,5 +10,6 @@ data class ValidationState(
     val confirmPassword: String = "",
     val passwordError: UiText? = null,
     val confirmPasswordError: UiText? = null,
-    val isVisiblePassword: Boolean = false
+    val isVisiblePassword: Boolean = false,
+    val profileImageUri: String = ""
 )

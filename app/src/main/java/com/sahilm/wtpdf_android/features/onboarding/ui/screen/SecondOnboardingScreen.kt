@@ -29,6 +29,10 @@ import com.sahilm.wtpdf_android.features.auth.ui.activity.AuthActivity
 import com.sahilm.wtpdf_android.features.onboarding.data.OnBoardingModel
 import com.sahilm.wtpdf_android.ui.theme.WTpdFandroidTheme
 import com.sahilm.wtpdf_android.ui.theme.backgroundLight
+import com.sahilm.wtpdf_android.ui.theme.onBackgroundLight
+import com.sahilm.wtpdf_android.ui.theme.onPrimaryLight
+import com.sahilm.wtpdf_android.ui.theme.primaryLight
+import com.sahilm.wtpdf_android.ui.theme.tertiaryLight
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
@@ -81,7 +85,7 @@ fun SecondOnboardingScreen(modifier: Modifier = Modifier) {
                     dotCount = pagerState.pageCount,
                     type = ShiftIndicatorType(
                         dotsGraphic = DotGraphic(
-                            color = MaterialTheme.colorScheme.onBackground,
+                            color = onBackgroundLight,
                             size = 8.dp
                         )
                     ),
@@ -100,7 +104,7 @@ fun SecondOnboardingScreen(modifier: Modifier = Modifier) {
 
                         Text(
                             "skip", style = TextStyle(
-                                color = MaterialTheme.colorScheme.tertiary,
+                                color = tertiaryLight,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Normal
                             ),
@@ -112,7 +116,7 @@ fun SecondOnboardingScreen(modifier: Modifier = Modifier) {
 
                         Text(
                             "Next", style = TextStyle(
-                                color = MaterialTheme.colorScheme.tertiary,
+                                color = tertiaryLight,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Normal
                             ),
@@ -138,7 +142,9 @@ fun SecondOnboardingScreen(modifier: Modifier = Modifier) {
                             onClick = {
                                 val intent = Intent(context, AuthActivity::class.java)
                                 context.startActivity(intent)
-                            }
+                            },
+                            containerColor = primaryLight,
+                            contentColor = onPrimaryLight
                         )
                     }
                 }

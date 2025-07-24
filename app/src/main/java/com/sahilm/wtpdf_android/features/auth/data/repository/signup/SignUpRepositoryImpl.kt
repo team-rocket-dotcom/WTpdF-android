@@ -1,6 +1,7 @@
 package com.sahilm.wtpdf_android.features.auth.data.repository.signup
 
 import android.util.Log
+import com.sahilm.wtpdf_android.features.auth.data.model.SignUpRequest
 import com.sahilm.wtpdf_android.features.auth.data.model.SignUpResponse
 import com.sahilm.wtpdf_android.features.auth.data.remote.SignUpApiService
 import com.sahilm.wtpdf_android.features.auth.util.ResultState
@@ -17,7 +18,13 @@ class SignUpRepositoryImpl @Inject constructor(
         password: String
     ) : ResultState<SignUpResponse?> {
         return try {
-            val response = signUpApiService.signUpUser(firstName,lastName, email, password)
+            val request = SignUpRequest(
+                email = email,
+                password = password,
+                firstName = firstName,
+                lastName = lastName
+            )
+            val response = signUpApiService.signUpUser(request)
             if (response.isSuccessful && response.body() != null) {
                 ResultState.Success(response.body())
             } else {
@@ -25,6 +32,7 @@ class SignUpRepositoryImpl @Inject constructor(
                 ResultState.Error(error)
             }
         } catch (e: Exception) {
+            Log.d("SignUpRepo", "signUpUser: ${e.message}")
             ResultState.Error("Couldn't reach the server. please check you connection")
         }
     }

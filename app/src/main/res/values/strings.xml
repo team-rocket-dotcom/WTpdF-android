@@ -11,8 +11,10 @@
 
     <string name="email_cannot_be_blank">Email cannot be blank</string>
     <string name="email_not_valid">This email is not valid</string>
+    <string name="password_cannot_be_blank">Password cannot be blank</string>
     <string name="password_smaller_than_eight">Password cannot be less than 8 characters</string>
     <string name="password_not_valid">The password must contain only letters and digits</string>
     <string name="confirm_password_cannot_be_blank">This field cannot be blank</string>
     <string name="this_password_must_be_same">This password should be same as the previous one</string>
+    <string name="fields_cannot_be_blank">The fields cannot be blank</string>
 </resources>

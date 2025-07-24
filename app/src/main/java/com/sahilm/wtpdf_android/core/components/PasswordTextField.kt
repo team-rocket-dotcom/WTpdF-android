@@ -50,7 +50,7 @@ fun PasswordTextField(
     isError: Boolean = false,
     leadingIcon: Int?,
     trailingIconResource: @Composable (() -> Unit)? = null,
-    errorMessage: UiText?,
+    errorMessage: UiText? = null,
     visualTransformation: VisualTransformation
     ) {
     WTpdFandroidTheme {

@@ -1,9 +1,9 @@
 package com.sahilm.wtpdf_android.features.auth.util
 
-import com.sahilm.wtpdf_android.features.auth.data.model.UserDataEntity
+import com.sahilm.wtpdf_android.features.auth.data.model.SignUpUserDataEntity
 import com.sahilm.wtpdf_android.features.auth.domain.model.UserData
 
-fun UserDataEntity.toModel() = UserData (
+fun SignUpUserDataEntity.toModel() = UserData (
     id = id,
     firstName = firstName,
     lastName = lastName,
@@ -11,7 +11,7 @@ fun UserDataEntity.toModel() = UserData (
     authProvider = authProvider
 )
 
-fun UserData.toEntity()  = UserDataEntity (
+fun UserData.toEntity()  = SignUpUserDataEntity (
     id = id,
     firstName = firstName,
     lastName = lastName,

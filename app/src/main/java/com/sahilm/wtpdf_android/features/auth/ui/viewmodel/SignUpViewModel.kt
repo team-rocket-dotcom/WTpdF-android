@@ -1,5 +1,8 @@
 package com.sahilm.wtpdf_android.features.auth.ui.viewmodel
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,10 +17,13 @@ import com.sahilm.wtpdf_android.features.auth.domain.usecase.ValidateEmailUseCas
 import com.sahilm.wtpdf_android.features.auth.domain.usecase.ValidatePasswordUseCase
 import com.sahilm.wtpdf_android.features.auth.util.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +39,6 @@ class SignUpViewModel @Inject constructor(
     private val validateEmailUseCase = ValidateEmailUseCase()
     private val validatePasswordUseCase = ValidatePasswordUseCase()
     private val validateConfirmPasswordUseCase = ValidateConfirmPasswordUseCase()
-
     var formState by mutableStateOf(ValidationState())
 
 
@@ -93,9 +98,22 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onSignUpClicked() {
-        viewModelScope.launch {
+            Log.d("SignUpViewModel", "onSignUpClicked: function called")
+            _uiState.update { it.copy(isLoading = true, message = null) }
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val isEmailValid = validateEmail()
+            val isPasswordValid = validatePassword()
+            val isConfirmPasswordValid = validateConfirmPassword()
+            val isUserNameValid = formState.userName.isNotBlank()
+
+            if (!isEmailValid || !isPasswordValid || !isConfirmPasswordValid || !isUserNameValid) {
+                Log.d("SignUpViewModel", "onSignUpClicked: invalidation case")
+            }
+
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, message = null)
+                Log.d("SignUpViewModel", "onSignUpClicked: _uiState value = ${_uiState.value} and uiState value = ${uiState.value}")
 
                 val userName = formState.userName
                 val email = formState.email
@@ -106,18 +124,27 @@ class SignUpViewModel @Inject constructor(
 
                 when (result) {
                     is ResultState.Success<*> -> {
-                        _uiState.value = uiState.value.copy(isLoading = false, isSignUpSuccessful = true)
+                        Log.d("SignUpViewModel", "onSignUpClicked: Hello from Success")
+                        _uiState.value = _uiState.value.copy(isLoading = false, isSignUpSuccessful = true)
                         _uiEvent.value = SignUpUiEvent.NavigateToHome
                     }
                     is ResultState.Error<*> -> {
+                        Log.d("SignUpViewModel", "onSignUpClicked: Hello from Error and ${result.message}")
                         _uiState.value = _uiState.value.copy(isLoading = false, message = result.message)
                         _uiEvent.value = SignUpUiEvent.ShowError(result.message!!)
                     }
                 }
 
             } catch (e: Exception) {
+                Log.d("SignUpViewModel", "onSignUpClicked: Hello from Catch and ${e.message}")
                 _uiState.value = _uiState.value.copy(isLoading = false, message = e.message)
             }
+        }
+    }
+
+    fun onImageSelectionClicked(uri: String?) {
+        uri?.let {
+            formState = formState.copy(profileImageUri = it)
         }
     }
 

@@ -26,7 +26,9 @@ import com.sahilm.wtpdf_android.features.onboarding.data.OnBoardingModel
 import com.sahilm.wtpdf_android.ui.theme.WTpdFandroidTheme
 import com.sahilm.wtpdf_android.ui.theme.bodyFontFamily
 import com.sahilm.wtpdf_android.ui.theme.primaryDark
+import com.sahilm.wtpdf_android.ui.theme.primaryLight
 import com.sahilm.wtpdf_android.ui.theme.secondaryDark
+import com.sahilm.wtpdf_android.ui.theme.secondaryLight
 
 @Composable
 fun SecondOnboardingItem(page: OnBoardingModel) {
@@ -50,7 +52,7 @@ fun SecondOnboardingItem(page: OnBoardingModel) {
                 style = TextStyle(
                     fontFamily = bodyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = primaryLight,
                     textAlign = TextAlign.Center,
                     fontSize = 36.sp
                 )
@@ -61,7 +63,7 @@ fun SecondOnboardingItem(page: OnBoardingModel) {
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W400,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = secondaryLight,
                     textAlign = TextAlign.Center
                 )
             )
